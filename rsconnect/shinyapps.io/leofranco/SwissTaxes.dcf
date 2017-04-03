@@ -1,0 +1,11 @@
+name: SwissTaxes
+title:
+account: leofranco
+server: shinyapps.io
+appId: 84758
+bundleId: 774985
+url: https://leofranco.shinyapps.io/SwissTaxes/
+when: 1491232552.6404
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: data/r14all.txt|data/r16all.txt
