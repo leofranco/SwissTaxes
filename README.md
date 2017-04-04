@@ -8,5 +8,5 @@ To see this app deployed:
   * Use the widgets on the left and see the results on the main chart.
 
 To see the slides with simple explanations and examples:
-  * Go to [http://rpubs.com/leofranco/SwissTaxes].
+  * Go to [http://rpubs.com/leofranco/SwissTaxes](http://rpubs.com/leofranco/SwissTaxes).
 
