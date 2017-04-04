@@ -1,0 +1,73 @@
+---
+title: "Swiss Taxes"
+author: "Leo Franco"
+date: "4 Apr 2017"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(data.table)
+library(ggplot2)
+library(scales)
+```
+
+## Swiss Taxes
+
+The idea of this project is to show different tax rates in Switzerland. These
+rates vary according to canton (state or region) and according to the particulars
+of the person (civil state, number of kids, etc).
+
+You can find the app in <https://leofranco.shinyapps.io/SwissTaxes/>. This is
+useful if you are new to Switzerland and would like to choose where to live
+to minimize the amount of taxes paid. Please note that this should not
+be the only criteria to choose a place to live. Also, please keep in mind that
+this information doesn't constitute any advice. It has been summarized from
+public sources and it is intended for educational purposes only.
+
+## Single person with no kids earning CHF 10,000 a month.
+
+```{r, echo = FALSE}
+filename <-"./data/r16all_filtered.txt"
+file.df <- read.csv(filename, stringsAsFactors=F, header=TRUE, sep=",", colClasses=c("character","character","numeric","character","numeric","numeric","numeric","numeric"))
+
+file.dt <- data.table(file.df)
+setkey(file.dt,Rate,Children,Church)
+results.dt <- file.dt[list("A",0,"N")]
+results.dt  <- results.dt[results.dt$From<=10000 & results.dt$To>=10000,]
+
+results.dt$TaxPer <- results.dt$TaxPer/100
+      #Next line is necesary to print bars in right order (and it hast to be a data frame)
+      results.df <- data.frame(results.dt)
+      results.df$Canton <- factor(results.df$Canton, levels=results.df[order(-results.df$TaxPer), "Canton"])
+      ggplot(data=results.df, aes(x=Canton, y=TaxPer, fill=Canton)) + geom_bar( stat="identity") + geom_text(aes(label = paste(sprintf("%.1f%%", TaxPer*100), sep=""), y = TaxPer, x=Canton), size = 2, position = position_dodge(width=0.9), vjust=-0.25) + guides(fill=FALSE) + xlab("") + ylab("") + ggtitle("") + scale_y_continuous(labels = percent) 
+```
+
+Best place to live is Zug with a tax rate of 8.6%
+
+## Married couple with 3 kids earning CHF 5,000 a month.
+
+```{r, echo = FALSE}
+filename <-"./data/r16all_filtered.txt"
+file.df <- read.csv(filename, stringsAsFactors=F, header=TRUE, sep=",", colClasses=c("character","character","numeric","character","numeric","numeric","numeric","numeric"))
+
+file.dt <- data.table(file.df)
+setkey(file.dt,Rate,Children,Church)
+results.dt <- file.dt[list("B",3,"N")]
+results.dt  <- results.dt[results.dt$From<=3000 & results.dt$To>=3000,]
+
+results.dt$TaxPer <- results.dt$TaxPer/100
+      #Next line is necesary to print bars in right order (and it hast to be a data frame)
+      results.df <- data.frame(results.dt)
+      results.df$Canton <- factor(results.df$Canton, levels=results.df[order(-results.df$TaxPer), "Canton"])
+      ggplot(data=results.df, aes(x=Canton, y=TaxPer, fill=Canton)) + geom_bar( stat="identity") + geom_text(aes(label = paste(sprintf("%.1f%%", TaxPer*100), sep=""), y = TaxPer, x=Canton), size = 2, position = position_dodge(width=0.9), vjust=-0.25) + guides(fill=FALSE) + xlab("") + ylab("") + ggtitle("") + scale_y_continuous(labels = percent) 
+```
+
+There are multiple cantons where this couple would pay no taxes at all.
+
+## Conclusion
+
+With this simple app we can analyze different tax rates and decide what is the
+best place to live based on this criteria. For instance, a single person earning
+10,000 francs a month would pay 8.6% if living in Zug but 19.6% if living in Jura. There is only 1.5 hours between then and some people would choose to commute in order to save 1,100 francs every month.
